@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockly Robot Programming</title>
+    <script src="blockly_compressed.js"></script>
+    <script src="blocks_compressed.js"></script>
+    <script src="javascript_compressed.js"></script>
+    <script src="custom_blocks.js"></script>
+    <script src="custom_generator.js"></script>
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+        }
+        #blocklyDiv {
+            height: 100vh;
+            width: 100vw;
+        }
+    </style>
+</head>
+<body>
+    <xml id="toolbox" style="display: none">
+        <category name="Control">
+            <block type="start"></block>
+            <block type="repeat"></block>
+        </category>
+        <category name="Movement">
+            <block type="move_up"></block>
+            <block type="move_down"></block>
+            <block type="move_left"></block>
+            <block type="move_right"></block>
+        </category>
+    </xml>
+    <div id="blocklyDiv"></div>
+    <script>
+        var workspace = Blockly.inject('blocklyDiv', {
+            toolbox: document.getElementById('toolbox')
+        });
+
+        function getGeneratedCode() {
+            var code = Blockly.JavaScript.workspaceToCode(workspace);
+            console.log("Generated Code: " + code);
+            
+            // Trimite codul către Flutter prin JavaScriptChannel
+            if (window.BlocklyChannel) {
+                window.BlocklyChannel.postMessage(code);
+            }
+        }
+    </script>
+    <button onclick="getGeneratedCode()">Run Code</button>
+</body>
+</html>

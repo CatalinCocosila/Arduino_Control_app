@@ -1,0 +1,12 @@
+<xml xmlns="https://developers.google.com/blockly/xml">
+  <category name="Control" colour="%{BKY_LOOPS_HUE}">
+    <block type="start"></block>
+    <block type="repeat"></block>
+  </category>
+  <category name="Movement" colour="%{BKY_MATH_HUE}">
+    <block type="move_up"></block>
+    <block type="move_down"></block>
+    <block type="move_left"></block>
+    <block type="move_right"></block>
+  </category>
+</xml>

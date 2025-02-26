@@ -19,7 +19,7 @@ class BluetoothManager extends ChangeNotifier {
 
     FlutterBluePlus.scanResults.listen((results) async {
       for (ScanResult r in results) {
-        if (r.device.platformName == "LED_Matrix") {
+        if (r.device.platformName == "Robot_Arduino") {
           device = r.device;
           await connectToDevice();
           FlutterBluePlus.stopScan();

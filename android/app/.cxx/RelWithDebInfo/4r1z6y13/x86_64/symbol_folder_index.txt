@@ -1,0 +1,1 @@
+C:\Users\cocos\Documents\Arduino_Control_app-main\build\app\intermediates\cxx\RelWithDebInfo\4r1z6y13\obj\x86_64

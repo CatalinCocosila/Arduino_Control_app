@@ -12,31 +12,76 @@ class BlocklyPage extends StatefulWidget {
 
 class BlocklyPageState extends State<BlocklyPage> {
   late WebViewController _controller;
-  String blocklyOutput = "";
+  final String remoteUrl =
+      "https://catalincocosila.github.io/blockly-web/index.html"; // GitHub Pages
 
   @override
   void initState() {
     super.initState();
+    initWebView();
+  }
+
+  /// Inițializare WebView și configurare controller
+  void initWebView() {
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..addJavaScriptChannel(
-        'BlocklyChannel',
+        'BlocBlocklyChannel', // Actualizat pentru a se potrivi cu HTML
         onMessageReceived: (message) {
-          setState(() {
-            blocklyOutput = message.message;
-          });
+          String command = message.message.trim();
+          debugPrint("✅ [FLUTTER] Comandă primită din Blockly: $command");
+          final bluetooth =
+              Provider.of<BluetoothManager>(context, listen: false);
+
+          if (bluetooth.isConnected) {
+            bluetooth.sendCommand(command);
+            debugPrint("✅ [FLUTTER] Comandă trimisă la Arduino: $command");
+          } else {
+            debugPrint(
+                "⚠️ [FLUTTER] Bluetooth nu este conectat! Încerc reconectarea...");
+            bluetooth.scanAndConnect();
+          }
         },
       )
-      ..loadFlutterAsset('assets/blockly/index.html');
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageFinished: (String url) {
+            debugPrint("✅ WebView încărcat: $url");
+            injectConsoleInterceptor();
+          },
+          onWebResourceError: (WebResourceError error) {
+            debugPrint(
+                "❌ Eroare WebView: ${error.errorType} - ${error.description}");
+            Future.delayed(const Duration(seconds: 2), () => loadBlockly());
+          },
+        ),
+      );
+
+    loadBlockly();
   }
 
-  void runBlocklyProgram(BluetoothManager bluetooth) async {
-    if (blocklyOutput.isEmpty) return;
-    
-    List<String> commands = blocklyOutput.split(',');
-    for (String command in commands) {
-      bluetooth.sendCommand(command);
-      await Future.delayed(const Duration(seconds: 1));
+  /// Injectează un script JavaScript pentru a intercepta `console.log` și a trimite mesajele la Flutter
+  void injectConsoleInterceptor() {
+    _controller.runJavaScript('''
+      (function() {
+        var oldLog = console.log;
+        console.log = function(message) {
+          oldLog(message);
+          if (window.BlocBlocklyChannel) {
+            window.BlocBlocklyChannel.postMessage(message);
+          }
+        };
+      })();
+    ''');
+  }
+
+  /// Încarcă pagina Blockly din GitHub Pages
+  void loadBlockly() {
+    debugPrint("🔍 Încerc să încarc WebView de la: $remoteUrl");
+    try {
+      _controller.loadRequest(Uri.parse(remoteUrl));
+    } catch (e) {
+      debugPrint("⚠️ Eroare la încărcarea WebView: $e");
     }
   }
 
@@ -45,14 +90,15 @@ class BlocklyPageState extends State<BlocklyPage> {
     final bluetooth = Provider.of<BluetoothManager>(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Blockly Robot Programming")),
+      appBar: AppBar(title: const Text("Blockly Robot Controller")),
       body: Column(
         children: [
+          bluetooth.isConnected
+              ? const Text("✅ Conectat la Arduino",
+                  style: TextStyle(color: Colors.green))
+              : const Text("🔍 Căutare dispozitiv BLE...",
+                  style: TextStyle(color: Colors.red)),
           Expanded(child: WebViewWidget(controller: _controller)),
-          ElevatedButton(
-            onPressed: () => runBlocklyProgram(bluetooth),
-            child: const Text("Start Program"),
-          ),
         ],
       ),
     );

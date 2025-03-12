@@ -1,56 +1,109 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ro">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blockly Robot Programming</title>
-    <script src="blockly_compressed.js"></script>
-    <script src="blocks_compressed.js"></script>
-    <script src="javascript_compressed.js"></script>
-    <script src="custom_blocks.js"></script>
-    <script src="custom_generator.js"></script>
+    <title>Blockly Robot Controller</title>
 
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            overflow: hidden;
-        }
-        #blocklyDiv {
-            height: 100vh;
-            width: 100vw;
-        }
-    </style>
+    <!-- Load Blockly core -->
+    <script src="https://unpkg.com/blockly/blockly_compressed.js"></script>
+    <script src="https://unpkg.com/blockly/blocks_compressed.js"></script>
+    <script src="https://unpkg.com/blockly/javascript_compressed.js"></script>
+    <script src="https://unpkg.com/blockly/msg/en.js"></script>
+
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <xml id="toolbox" style="display: none">
-        <category name="Control">
-            <block type="start"></block>
-            <block type="repeat"></block>
-        </category>
-        <category name="Movement">
-            <block type="move_up"></block>
-            <block type="move_down"></block>
-            <block type="move_left"></block>
-            <block type="move_right"></block>
-        </category>
-    </xml>
-    <div id="blocklyDiv"></div>
-    <script>
-        var workspace = Blockly.inject('blocklyDiv', {
-            toolbox: document.getElementById('toolbox')
-        });
+    <h2>Controlează Robotul</h2>
+    <div id="blocklyDiv" style="height: 500px; width: 100%;"></div>
 
-        function getGeneratedCode() {
-            var code = Blockly.JavaScript.workspaceToCode(workspace);
-            console.log("Generated Code: " + code);
-            
-            // Trimite codul către Flutter prin JavaScriptChannel
-            if (window.BlocklyChannel) {
-                window.BlocklyChannel.postMessage(code);
+    <xml id="toolbox" style="display: none">
+        <block type="move_forward"></block>
+        <block type="move_backward"></block>
+        <block type="turn_left"></block>
+        <block type="turn_right"></block>
+    </xml>
+
+    <script>
+        // ✅ Funcție globală pentru trimiterea comenzilor către Flutter WebView
+        window.sendCommand = function(command) {
+            if (window.BlocBlocklyChannel) {
+                window.BlocBlocklyChannel.postMessage(command);
+                console.log("📡 [JS] Comandă trimisă către Flutter: " + command);
+            } else {
+                console.log("⚠️ [JS] WebView nu este integrat cu Flutter. Comandă: " + command);
             }
-        }
+        };
+
+        document.addEventListener("DOMContentLoaded", function() {
+            console.log("🔄 Inițializare Blockly...");
+
+            // ✅ Definirea blocurilor personalizate
+            Blockly.Blocks['move_forward'] = {
+                init: function() {
+                    this.appendDummyInput().appendField("Mergi înainte");
+                    this.setPreviousStatement(true);
+                    this.setNextStatement(true);
+                    this.setColour(230);
+                }
+            };
+            Blockly.JavaScript.forBlock['move_forward'] = function(block, generator) {
+                return 'window.sendCommand("UP");\n';
+            };
+
+            Blockly.Blocks['move_backward'] = {
+                init: function() {
+                    this.appendDummyInput().appendField("Mergi înapoi");
+                    this.setPreviousStatement(true);
+                    this.setNextStatement(true);
+                    this.setColour(230);
+                }
+            };
+            Blockly.JavaScript.forBlock['move_backward'] = function(block, generator) {
+                return 'window.sendCommand("DOWN");\n';
+            };
+
+            Blockly.Blocks['turn_left'] = {
+                init: function() {
+                    this.appendDummyInput().appendField("Rotire stânga");
+                    this.setPreviousStatement(true);
+                    this.setNextStatement(true);
+                    this.setColour(230);
+                }
+            };
+            Blockly.JavaScript.forBlock['turn_left'] = function(block, generator) {
+                return 'window.sendCommand("LEFT");\n';
+            };
+
+            Blockly.Blocks['turn_right'] = {
+                init: function() {
+                    this.appendDummyInput().appendField("Rotire dreapta");
+                    this.setPreviousStatement(true);
+                    this.setNextStatement(true);
+                    this.setColour(230);
+                }
+            };
+            Blockly.JavaScript.forBlock['turn_right'] = function(block, generator) {
+                return 'window.sendCommand("RIGHT");\n';
+            };
+
+            // ✅ Inițializare Blockly
+            var workspace = Blockly.inject('blocklyDiv', { toolbox: document.getElementById('toolbox') });
+            console.log("✅ Blockly inițializat!");
+
+            // ✅ Generare și execuție cod la apăsarea butonului
+            window.runProgram = function() {
+                var code = Blockly.JavaScript.workspaceToCode(workspace);
+                console.log("📤 [JS] Cod generat:\n" + code);
+                try {
+                    eval(code); // Execută comenzile generate
+                } catch (error) {
+                    console.error("❌ [JS] Eroare la execuția codului Blockly:", error);
+                }
+            };
+        });
     </script>
-    <button onclick="getGeneratedCode()">Run Code</button>
+
+    <button onclick="runProgram()">Start Program</button>
 </body>
 </html>

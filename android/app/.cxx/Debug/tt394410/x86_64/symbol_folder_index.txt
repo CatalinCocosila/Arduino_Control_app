@@ -1,0 +1,1 @@
+C:\Users\cocos\Downloads\Arduino_Control_app-main\Arduino_Control_app-main\build\app\intermediates\cxx\Debug\tt394410\obj\x86_64

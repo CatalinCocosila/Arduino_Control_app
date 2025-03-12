@@ -1,0 +1,2 @@
+C:/Users/cocos/Documents/Arduino_Control_app-main/android/app/.cxx/RelWithDebInfo/4r1z6y13/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/cocos/Documents/Arduino_Control_app-main/android/app/.cxx/RelWithDebInfo/4r1z6y13/armeabi-v7a/CMakeFiles/rebuild_cache.dir

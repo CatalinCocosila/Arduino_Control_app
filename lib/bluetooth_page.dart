@@ -14,8 +14,10 @@ class BluetoothPage extends StatelessWidget {
       body: Column(
         children: [
           bluetooth.isConnected
-              ? const Text("✅ Conectat la Arduino", style: TextStyle(color: Colors.green))
-              : const Text("🔍 Căutare dispozitiv BLE...", style: TextStyle(color: Colors.red)),
+              ? const Text("✅ Conectat la Arduino",
+                  style: TextStyle(color: Colors.green))
+              : const Text("🔍 Căutare dispozitiv BLE...",
+                  style: TextStyle(color: Colors.red)),
           ElevatedButton(
             onPressed: () => bluetooth.sendCommand("UP"),
             child: const Text("UP"),

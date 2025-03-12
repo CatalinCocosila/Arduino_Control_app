@@ -1,0 +1,1 @@
+C:\Users\cocos\Documents\Arduino_Control_app-main\build\app\intermediates\cxx\Debug\4x4m3h5q\obj\arm64-v8a

@@ -1,0 +1,2 @@
+C:/Users/cocos/Documents/Arduino_Control_app-main/android/app/.cxx/Debug/4x4m3h5q/x86/CMakeFiles/edit_cache.dir
+C:/Users/cocos/Documents/Arduino_Control_app-main/android/app/.cxx/Debug/4x4m3h5q/x86/CMakeFiles/rebuild_cache.dir

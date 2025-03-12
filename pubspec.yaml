@@ -27,11 +27,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/blockly/  # ✅ Asigură-te că fișierele sunt în această cale
+    - assets/blockly/
     - assets/blockly/index.html
-    - assets/blockly/custom_blocks.js
-    - assets/blockly/custom_generator.js
-    - assets/blockly/blockly_compressed.js
-    - assets/blockly/blocks_compressed.js
-    - assets/blockly/javascript_compressed.js
-    - assets/blockly/toolbox.xml
+    - assets/blockly/style.css
+
